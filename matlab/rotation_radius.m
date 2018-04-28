@@ -9,4 +9,3 @@ if vr == vl
 else
     R = l * (vr + vl) / (vr - vl);
 end
-    

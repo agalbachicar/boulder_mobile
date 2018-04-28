@@ -44,4 +44,3 @@ for ii=2:length(t)
 end
 
 fc = plot_trajectory(poses, t, fc);
-
