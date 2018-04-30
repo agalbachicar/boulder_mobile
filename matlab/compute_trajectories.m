@@ -11,7 +11,7 @@ fc = 1;
 % Sampling rate + time vector.
 fs = 20; 
 dt = 1/fs;
-t = 0:0.01:10;
+t = 0:dt:10;
 
 %% Line trajectory
 
