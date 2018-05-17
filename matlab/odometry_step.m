@@ -1,5 +1,5 @@
 function [pose_f] = odometry_step(vr, vl, l, pose_i, dt)
-% @brief Computes the odometry for a diff-drive vehicle.
+% @brief Updates odometry for a diff-drive vehicle.
 % @param vr Right wheel linear speed.
 % @param vl Left wheel linear speed.
 % @param l Distance between wheels.
