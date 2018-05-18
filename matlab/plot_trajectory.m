@@ -43,13 +43,13 @@ function plot_trajectory(t, varargin)
     traj = varargin{k};
     
     traj = traj(:, 1:5:end);
-    tr = (traj([1, 2], 2:end) -
-          traj([1, 2], 1:end-1));
-    mean_tr = mean(sqrt(sum(tr.^2, 2)));
+%    tr = (traj([1, 2], 2:end) -
+%          traj([1, 2], 1:end-1));
+%    mean_tr = mean(sqrt(sum(tr.^2, 2)));
     x = traj(1, :) * 100.0;
     y = traj(2, :) * 100.0;
-    u = mean_tr * cos(traj(3, :));
-    v = mean_tr * sin(traj(3, :));
+    u = cos(traj(3, :));
+    v = sin(traj(3, :));
     quiver(x, y, u, v, 'Color', colors(k, :));
   end
   title('(x, y, \theta) = f(t)');

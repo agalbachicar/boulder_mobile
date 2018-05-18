@@ -1,11 +1,12 @@
 function [t, vr, vl] = diff_from_encoders(ts, rt, lt, n, d)
 % @brief Computes wheel velocities from encoder readings.
-% @param ts Sampling times, in s.
-% @param rt Right encoder tick count.
-% @param lt Left encoder tick count.
-% @param n Encoder ticks per turn.
-% @param d Wheel diamater, in m.
-% return Wheel tangential speeds, in m/s.
+% @param ts sampling times, in s.
+% @param rt right encoder tick count.
+% @param lt left encoder tick count.
+% @param n encoders' tick count per turn.
+% @param d wheels' diameter, in m.
+% return t, vr, vl measurement times in s, right wheel linear
+% velocities in m/s and left linear velocities in m/s.
 dts = ts(2:end) - ts(1:end-1);
 dlt = lt(2:end) - lt(1:end-1);
 drt = rt(2:end) - rt(1:end-1);
