@@ -9,7 +9,7 @@ function [traj] = compute_trajectory(t, vr, vl, l, pose_i)
 traj = zeros(3, length(t));
 traj(:, 1) = pose_i;
 for ii=2:length(t)
-  traj(:, ii) = odometry_step(vr(ii), vl(ii),
-                              l, traj(:,ii-1),
+  traj(:, ii) = odometry_step(vr(ii), vl(ii), ...
+                              l, traj(:,ii-1), ...
                               t(ii) - t(ii-1));
 end

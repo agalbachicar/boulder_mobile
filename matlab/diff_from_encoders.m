@@ -12,4 +12,4 @@ dlt = lt(2:end) - lt(1:end-1);
 drt = rt(2:end) - rt(1:end-1);
 vr = (pi * d / n) * (drt ./ dts);
 vl = (pi * d / n) * (dlt ./ dts);
-t = ts(1:end-1) .+ dts / 2;
+t = ts(1:end-1) + dts / 2;

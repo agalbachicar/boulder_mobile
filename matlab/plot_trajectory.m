@@ -5,7 +5,7 @@ function plot_trajectory(t, varargin)
   hold on;
   for k = 1:length(varargin)
     traj = varargin{k};
-    plot(t, traj(1, :) * 100.0,
+    plot(t, traj(1, :) * 100.0, ...
          'Color', colors(k, :));  
   end
   title('x = f(t)');
@@ -17,7 +17,7 @@ function plot_trajectory(t, varargin)
   hold on;
   for k = 1:length(varargin)
     traj = varargin{k};
-    plot(t, traj(2, :) * 100.0,
+    plot(t, traj(2, :) * 100.0, ...
          'Color', colors(k, :));
   end
   title('y = f(t)');
@@ -29,7 +29,7 @@ function plot_trajectory(t, varargin)
   hold on;
   for k = 1:length(varargin)
     traj = varargin{k};
-    plot(t, traj(3, :) * 100.0,
+    plot(t, traj(3, :) * 100.0, ...
          'Color', colors(k, :));
   end  
   title('\theta$ = f(t)');
