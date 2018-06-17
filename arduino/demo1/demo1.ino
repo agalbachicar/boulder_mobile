@@ -10,7 +10,7 @@ DCMotor motor0(M0_EN, M0_D0, M0_D1);
 DCMotor motor1(M1_EN, M1_D0, M1_D1);
 
 unsigned long demo_start_time = 0;
-unsigned long demo_duration = 10 * 1000;
+unsigned long demo_duration = 60 * 1000;
 unsigned long last_update_time = 0;
 unsigned long update_period = 40;
 int last_left_encoder_state = LOW;
@@ -32,8 +32,10 @@ void setup ()
   last_left_encoder_state = digitalRead(LEFT_ENCODER_PIN);
   pinMode(RIGHT_ENCODER_PIN, INPUT);
   last_right_encoder_state = digitalRead(LEFT_ENCODER_PIN);
-  motor0.setSpeed(30.0);
-  motor1.setSpeed(30.0);
+  motor0.setClockwise(true);
+  motor0.setSpeed(50.0);
+  motor1.setClockwise(false);
+  motor1.setSpeed(50.0);
 //  motor0.setSpeed(-50.0);
 //  motor1.setSpeed(50.0);
 //  motor0.setSpeed(50.0);
