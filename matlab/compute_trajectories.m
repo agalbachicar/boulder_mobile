@@ -22,9 +22,9 @@ pose_i = [0, 0, 0];
 
 % Computes the trajectory
 poses = zeros(3,length(t));
-poses(:,1) = pose_i;
+poses(:, 1) = pose_i;
 for ii=2:length(t)
-   poses(:,ii) = odometry_step(vr, vl, l, poses(:,ii-1), dt);
+   poses(:, ii) = odometry_step(vr, vl, l, poses(:,ii-1), dt);
 end
 
 fc = plot_trajectory(poses, t, fc);
@@ -38,7 +38,7 @@ pose_i = [0, 0, 0];
 
 % Computes the trajectory
 poses = zeros(3,length(t));
-poses(:,1) = pose_i;
+poses(:, 1) = pose_i;
 for ii=2:length(t)
    poses(:,ii) = odometry_step(vr, vl, l, poses(:,ii-1), dt);
 end
