@@ -1,6 +1,6 @@
-function dtwist_dt = planar_robot_dynamics(robot_model, t, twist, delta)
+function dtwist_dt = planar_dynamics(robot_model, t, twist, delta)
   vx = twist(1); vy = twist(2); omega = twist(3);
-  alpha = estimate_sideslip_angles(robot_model, vx, vy, omega, delta) * 0.5;
+  alpha = estimate_sideslip_angles(robot_model, vx, vy, omega, delta);
   Fyf = -(robot_model.Calpha(1) * alpha(1) + robot_model.Calpha(2) * alpha(2));
   Fyb = -(robot_model.Calpha(3) * alpha(3) + robot_model.Calpha(4) * alpha(4));
   Fxl = robot_model.Fl(delta);
