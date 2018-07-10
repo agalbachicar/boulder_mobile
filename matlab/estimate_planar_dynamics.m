@@ -30,15 +30,15 @@ function [Calpha, Fl, Fr] = estimate_planar_dynamics(robot_model, td, r, omega, 
     c = alpha(:, 1); ceq = [];
   end
   options = optimset('MaxIter', 100);
-  [cbeta, err] = fmincon(@cbeta_err, 1.0, [], [], [], [], 0, 1, @cbeta_ineq, options);
-  beta = cbeta * delta; vx = v .* cos(beta); vy = v .* sin(beta);
-  [Calpha, Fl, Fr] = estimate_planar_dynamics_impl(robot_model, vx, vy, omega, delta);
+  [Cbeta, err] = fmincon(@cbeta_err, 1.0, [], [], [], [], 0, 1, @cbeta_ineq, options)
+  beta = Cbeta * delta; vx = v .* cos(beta); vy = v .* sin(beta);
+  [Calpha, Fl, Fr, Fl_coeff, Fr_coeff] = estimate_planar_dynamics_impl(robot_model, vx, vy, omega, delta)
 end
 
-function [Calpha, Fl, Fr] = estimate_planar_dynamics_impl(robot_model, vx, vy, omega, delta)
+function [Calpha, Fl, Fr, Fl_coeff, Fr_coeff] = estimate_planar_dynamics_impl(robot_model, vx, vy, omega, delta)
   alpha = estimate_sideslip_angles(robot_model, vx, vy, omega, delta);
   robot_model.Calpha = estimate_sideslip_coeff(robot_model, vx, vy, omega, delta, alpha);
-  [robot_model.Fl, robot_model.Fr] = estimate_rear_drive_forces(robot_model, vx, vy,...
-                                                                omega, delta, alpha);
+  [robot_model.Fl, robot_model.Fr, Fl_coeff, Fr_coeff] = estimate_rear_drive_forces(robot_model, vx, vy,...
+                                                                                    omega, delta, alpha);
   Calpha = robot_model.Calpha; Fl = robot_model.Fl; Fr = robot_model.Fr;
 end

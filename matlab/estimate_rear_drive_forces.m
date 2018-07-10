@@ -1,4 +1,4 @@
-function [Fl_fit, Fr_fit] = estimate_rear_drive_forces(robot_model, vx, vy, omega, delta, alpha)
+function [Fl_fit, Fr_fit, Fl_fit_coeff, Fr_fit_coeff] = estimate_rear_drive_forces(robot_model, vx, vy, omega, delta, alpha)
   Fl = zeros(size(delta)); Fr = zeros(size(delta));
   for i = 1:length(delta)
     Fyf = -(robot_model.Calpha(1) * alpha(1, i) + robot_model.Calpha(2) * alpha(2, i));

@@ -1,3 +1,6 @@
+set(0, 'defaultAxesFontSize', 18);
+set(0, 'defaultLineLineWidth', 2);
+
 robot_model = struct;
 robot_model.m = 0.62;  % Kg
 robot_model.d = 0.066; % m
@@ -27,10 +30,14 @@ delta_samples = vertcat(delta_samples, -delta_samples);
 [robot_model.Calpha, robot_model.Fl, robot_model.Fr] = ...
     estimate_planar_dynamics(robot_model, td_samples, r_samples, omega_samples, delta_samples);
 
-% figure;
-% delta = linspace(-pi/6, pi/6, 50);
-% plot(delta, robot_model.Fl(delta), 'b',...
-%      delta, robot_model.Fr(delta), 'r');
+figure;
+delta = linspace(-pi/6, pi/6, 200);
+plot(delta, robot_model.Fl(delta), 'b', ...
+     delta, robot_model.Fr(delta), 'r');
+legend('F_l(\delta)', 'F_r(\delta)');
+xlabel('\delta [rad]');
+ylabel('F [N]');
+grid on;
 
 t0 = 0;
 tf = 10;
@@ -44,14 +51,29 @@ theta = cumtrapz(t, twist(:, 3));
 x = cumtrapz(t, twist(:, 1) .* cos(theta) - twist(:, 2) .* sin(theta));
 y = cumtrapz(t, twist(:, 1) .* sin(theta) + twist(:, 2) .* cos(theta));
 figure;
-plot(x, y);
+u = cos(theta);
+v = sin(theta);
+quiver(x(1:3:end), y(1:3:end), u(1:3:end), v(1:3:end));
+xlabel('x [m]');
+ylabel('y [m]');
 x(end)
 y(end)
 theta(end) * 180 / pi
 sum(sqrt(diff(x).^2 + diff(y).^2))
-%plot(t, twist(:, 1), 'b', t, twist(:, 2), 'r', t, twist(:, 3), 'g');
-%lsode_options('absolute tolerance', 0.01);
-%lsode_options('relative tolerance', 0.01);
-%lsode_options('integration method', 'non-stiff');
-%lsode_options('maximum order', 3);
-%lsode(odefun, [0.5;0.;0.], linspace(0., 1.0, 100))
+
+deltafun = @(t) max_steering * pi / 180 * sin(2 * pi * (t - t0)/tf);
+odefun = @(t, y) planar_dynamics(robot_model, t, y, deltafun(t));
+[t, twist] = ode45(odefun, [t0 tf], [0.28;0.;0.]);
+theta = cumtrapz(t, twist(:, 3));
+x = cumtrapz(t, twist(:, 1) .* cos(theta) - twist(:, 2) .* sin(theta));
+y = cumtrapz(t, twist(:, 1) .* sin(theta) + twist(:, 2) .* cos(theta));
+figure;
+u = cos(theta);
+v = sin(theta);
+quiver(x(1:3:end), y(1:3:end), u(1:3:end), v(1:3:end));
+xlabel('x [m]');
+ylabel('y [m]');
+x(end)
+y(end)
+theta(end) * 180 / pi
+sum(sqrt(diff(x).^2 + diff(y).^2))
