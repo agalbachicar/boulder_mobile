@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<launch>
+
+  <node name="twist_to_bicyclecar"
+        pkg="boulder_mobile"
+        type="twist_to_biclecar.py"
+        args=""
+        respawn="true" />
+
+  <node name="joint_states_to_odom"
+        pkg="boulder_mobile"
+        type="joint_states_to_odom.py"
+        args=""
+        respawn="true" />
+
+</launch>
