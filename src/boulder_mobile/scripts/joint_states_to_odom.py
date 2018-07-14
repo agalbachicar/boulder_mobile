@@ -148,6 +148,10 @@ class BicycleCarOdom(object):
         # publish the message
         self._odom_publisher.publish(odom_msg)
 
+    def _pub_map_to_odom(self, t):
+        self._odom_broadcaster.sendTransform( \
+                (0., 0., 0.), (0., 0., 0., 1.), t, "map", "odom")
+
     def run(self, frequency):
         rate = rospy.Rate(frequency)
         while not rospy.is_shutdown():
@@ -166,6 +170,7 @@ class BicycleCarOdom(object):
             self._odometry_step(left_n, right_n, steering_angle, t)
             # Publishes the odometry
             self._pub_odom(t)
+            self._pub_map_to_odom(t)
 
 
 if __name__ == '__main__':
