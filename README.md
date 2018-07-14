@@ -80,8 +80,7 @@ consoles:
 
 ```
 roslaunch rosserial_server serial.launch
-roslaunch boulder_mobile run_all.launch
-rosrun teleop_twist_keyboard teleop_twist_keyboard.py
+roslaunch boulder_mobile boulder_mobile.launch
 ```
 
 Use the keyboard to control the **boulder_mobile**!

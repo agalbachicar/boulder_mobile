@@ -1,16 +1,19 @@
 <?xml version="1.0" ?>
 <launch>
 
-  <node name="twist_to_bicyclecar"
-        pkg="boulder_mobile"
-        type="twist_to_biclecar.py"
-        args=""
-        respawn="true" />
+  <arg name="visual" default="true" />
 
-  <node name="joint_states_to_odom"
-        pkg="boulder_mobile"
-        type="joint_states_to_odom.py"
-        args=""
-        respawn="true" />
+  <!-- Runs the node that binds between cmd_vel and boulder_mobile topics -->
+  <node pkg="boulder_mobile" name="twist_to_bicyclecar" type="twist_to_bicyclecar.py" output="screen">
+  </node>
+
+  <!-- Runs the node that publishes tf transforms from the boulder_mobile joint states  -->
+  <node pkg="boulder_mobile" name="joint_states_to_odom" type="joint_states_to_odom.py" output="screen">
+  </node>
+
+  <!-- Runs RViz visualization if required -->
+  <include file="$(find boulder_mobile)/launch/visualization.launch">
+    <arg name="visual" value="$(arg visual)"/>
+  </include>
 
 </launch>
