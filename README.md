@@ -79,8 +79,10 @@ communication through `/dev/ttyACM0`. Then, run the following in different
 consoles:
 
 ```
-roslaunch rosserial_server serial.launch
+roscore
+rosrun rosserial_python serial_node.py /dev/ttyACM0
 roslaunch boulder_mobile boulder_mobile.launch
+rosrun teleop_twist_keyboard teleop_twist_keyboard.py
 ```
 
 Use the keyboard to control the **boulder_mobile**!

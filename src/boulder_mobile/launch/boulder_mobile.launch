@@ -15,5 +15,4 @@
   <include file="$(find boulder_mobile)/launch/visualization.launch">
     <arg name="visual" value="$(arg visual)"/>
   </include>
-
 </launch>

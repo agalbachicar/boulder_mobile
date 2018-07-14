@@ -157,7 +157,6 @@ class BicycleCarOdom(object):
         while not rospy.is_shutdown():
             # Goes to sleep
             rate.sleep()
-
             # Acquires the lock to get the joint states
             self._lock.acquire()
             t = rospy.Time.now()
@@ -165,7 +164,6 @@ class BicycleCarOdom(object):
             right_n = self._left_encoder
             steering_angle = math.radians(self._steering)
             self._lock.release()
-
             # Computes the odometry step
             self._odometry_step(left_n, right_n, steering_angle, t)
             # Publishes the odometry
@@ -174,4 +172,4 @@ class BicycleCarOdom(object):
 
 
 if __name__ == '__main__':
-    BicycleCarOdom().run(10)
+    BicycleCarOdom().run(1)

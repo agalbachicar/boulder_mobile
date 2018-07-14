@@ -3,6 +3,8 @@ import roslib; roslib.load_manifest(PKG)
 
 import math
 
+import rospy
+
 class BoulderMobile(object):
     _L = 0.155                                # [m]
     _L_R = _L / 2.                            # [m]
@@ -13,6 +15,8 @@ class BoulderMobile(object):
     _STEER_ANGLE_MIN = 70. * math.pi / 180.   # [rad]
     _STEER_ANGLE_MAX = 110. * math.pi / 180.  # [rad]
     _STEER_ANGLE_OFF = math.pi / 2.           # [rad]
+    _CMD_VEL_MAX = 255                        # 1
+    _CMD_VEL_MIN = 0                          # 1
 
     def __init__(self):
         pass
@@ -60,14 +64,14 @@ class BoulderMobile(object):
 
     def wheel_linear_speed_to_cmd(self, vel):
         cmd = vel * 100 + 50 # % of PWM (normalized in 255 ?)
-        cmd = math.min(cmd, BoulderMobile._CMD_VEL_MAX)
-        cmd = math.max(cmd, BoulderMobile._CMD_VEL_MIN)
+        cmd = min(cmd, BoulderMobile._CMD_VEL_MAX)
+        cmd = max(cmd, BoulderMobile._CMD_VEL_MIN)
         return cmd
 
     def steering_to_cmd(self, steering):
         cmd = steering * 0.5 + BoulderMobile._STEER_ANGLE_OFF
-        cmd = math.min(cmd, BoulderMobile._STEER_ANGLE_MAX)
-        cmd = math.max(cmd, BoulderMobile._STEER_ANGLE_MIN)
+        cmd = min(cmd, BoulderMobile._STEER_ANGLE_MAX)
+        cmd = max(cmd, BoulderMobile._STEER_ANGLE_MIN)
         return math.degrees(cmd)
 
     def wheel_speeds_to_twist(self, vl, vr):

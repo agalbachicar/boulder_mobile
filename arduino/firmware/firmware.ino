@@ -73,6 +73,7 @@ void steering_cmd_callback(const std_msgs::UInt8& data){
   } else {
     steering_cmd = steering_value;
   }
+  steering_position = steering_cmd;
 }
 
 ros::Subscriber<std_msgs::UInt8> steering_cmd_subscriber("command/steering", steering_cmd_callback );
