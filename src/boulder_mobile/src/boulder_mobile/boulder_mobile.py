@@ -55,7 +55,7 @@ class BoulderMobile(object):
         vr = linear
         if angular != 0.:
             r = linear / angular
-            if math.abs(r) < BoulderMobile._MIN_ROT_RADIUS:
+            if abs(r) < BoulderMobile._MIN_ROT_RADIUS:
                 rospy.logerr("Rotation radius is less than minimum.")
                 return 0, 0, 0
             dsteering = math.atan(BoulderMobile._L / r)
