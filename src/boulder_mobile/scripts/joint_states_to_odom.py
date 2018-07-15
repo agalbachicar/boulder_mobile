@@ -93,7 +93,6 @@ class BicycleCarOdom(object):
 
     def _odometry_step(self, left_n, right_n, steering_angle, t):
         d_t = (t - self._last_t).to_sec()
-        steering_rad = math.radians(steering_angle)
 
         d_theta_l = self._bm.encoder_count_to_rad(left_n - self._last_left_encoder)
         d_theta_r = self._bm.encoder_count_to_rad(right_n - self._last_right_encoder)
@@ -105,12 +104,12 @@ class BicycleCarOdom(object):
         vr = wr * self._bm.get_wheel_radius()
 
         v, w = self._bm.wheel_speeds_to_twist(vl, vr)
-        vx = v * math.cos(steering_rad + self._last_pose.get_theta())
-        vy = v * math.sin(steering_rad + self._last_pose.get_theta())
+        vx = v * math.cos(steering_angle + self._last_pose.get_theta())
+        vy = v * math.sin(steering_angle + self._last_pose.get_theta())
 
         d_x = vx * d_t
         d_y = vy * d_t
-        d_theta = v / self._bm.get_rear_length() * math.sin(steering_rad)
+        d_theta = v / self._bm.get_rear_length() * math.sin(steering_angle)
 
         # Updates the pose
         self._last_pose = self._last_pose + Pose2D(x=d_x, y=d_y, theta=d_theta)
@@ -164,6 +163,8 @@ class BicycleCarOdom(object):
             right_n = self._left_encoder
             steering_angle = math.radians(self._steering)
             self._lock.release()
+            # Removes the offset to the steering angle.
+            steering_angle = steering_angle - self._bm.steering_angle_offset()
             # Computes the odometry step
             self._odometry_step(left_n, right_n, steering_angle, t)
             # Publishes the odometry
