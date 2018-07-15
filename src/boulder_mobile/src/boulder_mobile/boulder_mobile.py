@@ -17,6 +17,7 @@ class BoulderMobile(object):
     _STEER_ANGLE_OFF = math.pi / 2.           # [rad]
     _CMD_VEL_MAX = 255                        # 1
     _CMD_VEL_MIN = 0                          # 1
+    _MIN_ROT_RADIUS = _L / math.tan(math.radians(20))  # [m]
 
     def __init__(self):
         pass
@@ -54,8 +55,8 @@ class BoulderMobile(object):
         vr = linear
         if angular != 0.:
             r = linear / angular
-            if r == 0: # TODO check min r
-                rospy.logerr("Curvature radius is less than minimum")
+            if math.abs(r) < BoulderMobile._MIN_ROT_RADIUS:
+                rospy.logerr("Rotation radius is less than minimum.")
                 return 0, 0, 0
             dsteering = math.atan(BoulderMobile._L / r)
             vr = linear * (1. + BoulderMobile._W / (2. * r))
