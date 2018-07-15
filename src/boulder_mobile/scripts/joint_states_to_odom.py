@@ -3,6 +3,7 @@
 import math
 from threading import Lock
 
+import numpy as np
 import rospy
 import tf
 
@@ -11,6 +12,7 @@ from nav_msgs.msg import Odometry
 from std_msgs.msg import UInt8, UInt16
 
 from boulder_mobile import BoulderMobile
+
 
 class Pose2D(object):
     def __init__(self, x=0, y=0, theta=0):
@@ -27,11 +29,6 @@ class Pose2D(object):
     def get_theta(self):
         return self._theta
 
-    def __add__(self, other):
-        self._x += other.get_x()
-        self._y += other.get_y()
-        self._theta += other.get_theta()
-        return self
 
 class BicycleTwist(object):
     def __init__(self, vx=0, vy=0, w=0):
@@ -92,34 +89,69 @@ class BicycleCarOdom(object):
         self._lock.release()
 
     def _odometry_step(self, left_n, right_n, steering_angle, t):
-        d_t = (t - self._last_t).to_sec()
+        dt = (t - self._last_t).to_sec()
 
-        d_theta_l = self._bm.encoder_count_to_rad(left_n - self._last_left_encoder)
-        d_theta_r = self._bm.encoder_count_to_rad(right_n - self._last_right_encoder)
+        # Check for wraparounds.
+        left_dn = left_n - self._last_left_encoder
+        if left_dn < 0:
+            left_dn += 65536
+        dtheta_l = self._bm.encoder_count_to_rad(left_dn)
 
-        wl = d_theta_l / d_t
-        wr = d_theta_r / d_t
+        right_dn = right_n - self._last_right_encoder
+        if right_dn < 0:
+            right_dn += 65536
+        dtheta_r = self._bm.encoder_count_to_rad(right_dn)
 
+        wl = dtheta_l / dt
+        wr = dtheta_r / dt
         vl = wl * self._bm.get_wheel_radius()
         vr = wr * self._bm.get_wheel_radius()
 
         v, w = self._bm.wheel_speeds_to_twist(vl, vr)
-        vx = v * math.cos(steering_angle + self._last_pose.get_theta())
-        vy = v * math.sin(steering_angle + self._last_pose.get_theta())
 
-        d_x = vx * d_t
-        d_y = vy * d_t
-        d_theta = v / self._bm.get_rear_length() * math.sin(steering_angle)
-
-        # Updates the pose
-        self._last_pose = self._last_pose + Pose2D(x=d_x, y=d_y, theta=d_theta)
+        # Assuming no slippage, odometry update is the same as
+        # that of a diff drive.
+        if w != 0.0:
+            r = v / w
+            base_pose = np.array([
+                self._last_pose.get_vx(),
+                self._last_pose.get_vy(),
+                self._last_pose.get_theta(),
+            ])
+            icc_pose = base_pose - np.array([
+                self._last_pose.get_vx() - r * math.sin(
+                    self._last_pose.get_theta()
+                ),
+                self._last_pose.get_vx() + r * math.cos(
+                    self._last_pose.get_theta()
+                ),
+                0.0
+            ])
+            icc_rotation = np.array([
+                [math.cos(w * dt), -math.sin(w * dt), 0],
+                [math.sin(w * dt), math.cos(w * dt), 0],
+                [0.0, 0.0, 1.0]
+            ])
+            next_x, next_y, next_theta = (
+                icc_rotation * (base_pose - icc_pose)
+                + icc_pose + np.array([0.0, 0.0, w*dt])
+            )
+            self._last_pose = Pose2D(
+                x=next_x, y=next_y, theta=next_theta
+            )
+        else:
+            self._last_pose = Pose2D(
+                x=v * dt * math.cos(self._last_pose.get_theta()),
+                y=v * dt * math.sin(self._last_pose.get_theta()),
+                theta=self._last_pose.get_theta()
+            )
         # Updates the time
         self._last_t = t
         # Updates the encoders
         self._last_left_encoder = left_n
         self._last_right_encoder = right_n
         # Updates the last twist
-        self._last_twist = BicycleTwist(vx=vx, vy=vy , w=w)
+        self._last_twist = BicycleTwist(vx=v, vy=0.0, w=w)
 
     def _pub_odom(self, t):
         odom_msg = Odometry()
