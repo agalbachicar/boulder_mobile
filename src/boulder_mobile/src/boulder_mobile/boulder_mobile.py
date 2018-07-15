@@ -78,12 +78,8 @@ class BoulderMobile(object):
         # Checks the trivial case where the mobile is moving forward.
         if vl == vr:
             return vl, 0
-        # Converts vl and vr to V and w
-        if vr == 0:
-            raise Exception('vl cannot be 0.')
-        # Rotation radius
-        r = _W * (1. + vl / vr) / (2. * (1 - vl / vr))
-        # Linear and angular speed
-        v = vl / (1 - _W / (2. * r))
-        w = v / r
+        # Linear and angular speed (same as diff drive,
+        # assuming no slippage).
+        v = (vr + vl) / 2.
+        w = (vr - vl) / _W
         return v, w
